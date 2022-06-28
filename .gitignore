@@ -1,0 +1,9 @@
+/.blackbox/pubring.gpg~
+/.blackbox/pubring.kbx~
+/.blackbox/secring.gpg
+/files/bkpddr.yaml
+/files/bkpd.yaml
+/files/bkpidr.yaml
+/files/bkpi.yaml
+/files/qa-bkpd.yaml
+/files/qa-bkpi.yaml
