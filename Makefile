@@ -5,7 +5,7 @@ help:
 	@grep -E '[a-zA-Z\.\-]+:.*?@ .*$$' $(MAKEFILE_LIST)| tr -d '#'  | awk 'BEGIN {FS = ":.*?@ "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 CLUSTERS ?= qa-bkpd qa-bkpi bkpd bkpi bkpddr bkpidr vo-ranch qvo-ranch scidmz-ranch
-GREPOUT ?= 'oit|cattle|kube|nfs|cert-manager|sumologic|fleet-agent'
+GREPOUT ?= 'cattle|kube|nfs|cert-manager|sumologic|fleet-agent'
 
 #secrets: @ Files to decrypt
 SECRET_FILES=$(shell cat .blackbox/blackbox-files.txt)
@@ -15,6 +15,11 @@ $(SECRET_FILES): %: %.gpg
 .PHONY: 
 
 yamls: files/qa-bkpi.yaml files/qa-bkpd.yaml files/bkpi.yaml files/bkpd.yaml files/bkpidr.yaml files/bkpddr.yaml files/qvo-ranch.yaml files/scidmz-ranch.yaml files/vo-ranch.yaml
+
+## Namespaces
+#namespaces: @ namespaces info by CLUSTER var
+namespaces: yamls
+	@$(foreach file, $(CLUSTERS), echo "####### $(file) NAMESPACES ######" ; kubectl get namespaces -A -o=custom-columns=NAME:.metadata.name,OWNER:.metadata.labels.owner --kubeconfig=files/$(file).yaml| grep -Ev $(GREPOUT) ; echo "" ;)
 
 ## Deployments
 #deployments: @ deployment info by CLUSTERS var
