@@ -2,5 +2,10 @@
 - [X] Add VO PROD and QA
 - [X] ADD SDMZ
 - [X] Write Makefile queries
-- [ ] Figure out output location
-- [ ] Figure out output format
+- [X] Figure out output location
+- [ ] Figure out output format(s)
+- [ ] Create HTML page(s)
+- [ ] Build out kustomize deploy
+  - [ ] Use secrets in volumes
+  - [ ] Secret creation with Make
+- [ ] Modify scripts to use volume secret location
