@@ -11,6 +11,7 @@ import sys
 import re
 from kubernetes import client, config
 
+html_dir = '/usr/share/nginx/html'
 cluster_list = ['qa-bkpd', 'qa-bkpi', 'bkpd', 'bkpi', 'bkpddr', 'bkpidr', 'vo-ranch', 'qvo-ranch', 'scidmz-ranch']
 
 def node_list(cl_name):
@@ -19,7 +20,7 @@ def node_list(cl_name):
   node_query = core_query.list_node(watch=False, timeout_seconds=15)
   node_num = len(node_query.items)
   # Setup output file
-  output = 'outputs/' + cl_name + '_nodes.csv'
+  output = html_dir + 'outputs/' + cl_name + '_nodes.csv'
   csv_file = open(output, 'w')
   csv_file.write('Node,Type\n')
   for node in node_query.items:

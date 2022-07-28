@@ -11,6 +11,8 @@ import sys
 import re
 from kubernetes import client, config
 
+
+html_dir = '/usr/share/nginx/html'
 cluster_list = ['qa-bkpd', 'qa-bkpi', 'bkpd', 'bkpi', 'bkpddr', 'bkpidr', 'vo-ranch', 'qvo-ranch', 'scidmz-ranch']
 excluded_raw = [
   'security-scan',
@@ -38,7 +40,7 @@ def nsquery(cl_name):
   # Define Core API connection
   core_query = client.CoreV1Api()
   # Setup output file
-  output = 'outputs/' + cl_name + '_namespaces.csv'
+  output = html_dir + 'outputs/' + cl_name + '_namespaces.csv'
   csv_file = open(output, 'w')
   csv_file.write('Namespace, Owner, Resources\n')
   # Get namespace list

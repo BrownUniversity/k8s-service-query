@@ -1,0 +1,2 @@
+0 * * * * /usr/local/bin/nodes.py 
+10 * * * * /usr/local/bin/namespaces.py
