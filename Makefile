@@ -9,7 +9,7 @@ SECRET_FILES=$(shell cat .blackbox/blackbox-files.txt)
 $(SECRET_FILES): %: %.gpg
 	gpg --decrypt --quiet --no-tty --yes $< > $@
 
-CLUSTER ?= bkpd bkpi bkpddr bkpidr qa-bkpd qa-bkpi vo-ranch qa-voranch scidmz-ranch
+CLUSTER ?= bkpd bkpi bkpddr bkpidr qa-bkpd qa-bkpi vo-ranch qvo-ranch scidmz-ranch
 
 .PHONY: build dlogin.qa dlogin.prod push.qa push.prod \
 	secrets.qa secrets.prod deploy.qa deploy.prod
@@ -32,7 +32,7 @@ dlogin.qa: secrets/robot.qa
 
 #dlogin.prod: @ PROD docker login
 dlogin.prod: secrets/robot.prod
-	cat secerts/robot.prod | docker login -u 'bke-bkereporting+build' \
+	cat secrets/robot.prod | docker login -u 'bke-bkereporting+build' \
 	--password-stdin harbor.services.brown.edu
 
 ## DOCKER PUSH ##
@@ -48,26 +48,24 @@ push.prod: dlogin.prod
 #secrets.qa: @ publish secrets to QA namespace
 secrets.qa: yamls
 	$(foreach CL_NAME, $(CLUSTER), \
-	kubectl delete secret $(CL_NAME) --ignore-not-found -n bkereporting --kubeconfig=secrets/qa-bkpi.yml, \
+	kubectl delete secret $(CL_NAME) --ignore-not-found -n bkereporting --kubeconfig=secrets/qa-bkpi.yaml; \
 	kubectl create secret generic $(CL_NAME) --from-file=secrets/$(CL_NAME).yaml \
-	--type=kubernetes.io/dockerconfigjson -n bkereporting --kubeconfig=secrets/qa-bkpi.yaml \
-	; )
+	-n bkereporting --kubeconfig=secrets/qa-bkpi.yaml ; )
 
 #secrets.prod: @ publish secrets to PROD namespace
 secrets.prod: yamls
 	$(foreach CL_NAME, $(CLUSTER), \
-	kubectl delete secret $(CL_NAME) --ignore-not-found -n bkereporting --kubeconfig=secrets/bkpi.yml, \
+	kubectl delete secret $(CL_NAME) --ignore-not-found -n bkereporting --kubeconfig=secrets/bkpi.yaml; \
 	kubectl create secret generic $(CL_NAME) --from-file=secrets/$(CL_NAME).yaml \
-	--type=kubernetes.io/dockerconfigjson -n bkereporting --kubeconfig=secrets/bkpi.yaml \
-	; )
+	-n bkereporting --kubeconfig=secrets/bkpi.yaml ; )
 
 ## DELPOY APP TO NAMESPACE ##
 #deploy.qa: @ deploy app to QA namespace
 deploy.qa: secrets.qa
 	echo "deploy.qa"
-	kubectl apply -k overlays/prod --kubeconfig=secrets/bkpi.yml
+	kubectl apply -k overlays/qa --kubeconfig=secrets/qa-bkpi.yaml
 
 #deploy.prod: @ deploy app to PROD namespace
 deploy.prod: secrets.prod
 	echo "deploy.prod"
-	kubectl apply -k overlays/qa --kubeconfig=secrets/qa-bkpi.yml
+	kubectl apply -k overlays/prod --kubeconfig=secrets/bkpi.yaml

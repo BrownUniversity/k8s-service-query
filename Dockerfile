@@ -13,7 +13,9 @@ COPY ./scripts/*.py /usr/local/bin/
 RUN apt-get -y install cron
 COPY ./scripts/bke-cron /etc/cron.d/bke-cron
 RUN chmod 0644 /etc/cron.d/bke-cron
+RUN chmod gu+s /usr/sbin/cron
 RUN crontab /etc/cron.d/bke-cron
 RUN touch /var/log/cron.log
+RUN touch /var/run/crond.pid && chmod 777 /var/run/crond.pid
 USER 1001
 CMD ["cron", "-f"]
