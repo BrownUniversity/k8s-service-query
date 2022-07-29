@@ -13,13 +13,11 @@ $(SECRET_FILES): %: %.gpg
 
 yamls: secrets/qa-bkpi.yaml secrets/qa-bkpd.yaml secrets/bkpi.yaml secrets/bkpd.yaml secrets/bkpidr.yaml secrets/bkpddr.yaml secrets/qvo-ranch.yaml secrets/scidmz-ranch.yaml secrets/vo-ranch.yaml
 
-#namespaces: @ namespaces info by CLUSTER
-namespaces: yamls
-	./namespace.py
+#secrets: @ publish secrets to namespace
+secrets: yamls
+	echo "secrets"
 
-#nodes: @ Node info by cluster
-nodes: yamls
-	./nodes.py
+#deploy: @ deploy app to namespace
+deploy: secrets
+	echo "deploy"
 
-#export: @ Move exported files 
-export: 

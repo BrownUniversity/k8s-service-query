@@ -8,6 +8,11 @@
 - [ ] Build out kustomize deploy
   - [ ] Use secrets in volumes
   - [ ] Secret creation with Make
-- [ ] Modify scripts to use volume secret location
+- [X] Modify scripts to use volume secret location
 - [ ] refactor makefile
-- [ ] rename files dir to secrets
+- [X] rename files dir to secrets
+- [ ] create namespace in bke-namespace repo
+- [ ] Request cert for default VIP
+- [ ] Request DNS to default VIP
+- [ ] Rewrite README.md
+- [ ] create harbor project/repo

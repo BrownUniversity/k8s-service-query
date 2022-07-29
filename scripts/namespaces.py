@@ -13,6 +13,7 @@ from kubernetes import client, config
 
 
 html_dir = '/usr/share/nginx/html'
+kconfig_dir = '/etc/kubeconfig'
 cluster_list = ['qa-bkpd', 'qa-bkpi', 'bkpd', 'bkpi', 'bkpddr', 'bkpidr', 'vo-ranch', 'qvo-ranch', 'scidmz-ranch']
 excluded_raw = [
   'security-scan',
@@ -94,7 +95,7 @@ def main():
   # for each cluster do the thing
   for cl_name in cluster_list:
     # load kconfig yaml 
-    kconfig_file = 'files/' + cl_name + '.yaml'
+    kconfig_file = kconfig_dir + '/' + cl_name + '.yaml'
     config.load_kube_config(config_file=kconfig_file)
     nsquery(cl_name)
 

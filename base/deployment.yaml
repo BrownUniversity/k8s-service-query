@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bkereporting
+spec:
+  selector:
+    matchLabels:
+      app: bkereporting
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: bkereporting
+    spec:
+      containers:
+      - name: bkereporting
+        image: harbor.cis-qas.brown.edu/bkereporting/reporter:latest
+        imagePullPolicy: Always    
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: bkereporting
+          mountPath: /usr/share/nginx/html
+        resources:
+          requests:
+            cpu: 100m
+            memory: "128M"
+          limits:
+            cpu: 100m
+            memory: "256M"
+      volumes:
+      - name: bkereporting
+        persistentVolumeClaim:
+          claimName: bkereporting
+      nodeSelector:
+        node-role.kubernetes.io/worker: "true"
