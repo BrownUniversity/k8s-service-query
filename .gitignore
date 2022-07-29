@@ -12,3 +12,4 @@
 /secrets/vo-ranch.yaml
 /outputs/**.csv
 /secrets/robot.qa
+/secrets/robot.prod
