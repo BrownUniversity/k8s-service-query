@@ -11,7 +11,7 @@ $(SECRET_FILES): %: %.gpg
 
 .PHONY: 
 
-yamls: files/qa-bkpi.yaml files/qa-bkpd.yaml files/bkpi.yaml files/bkpd.yaml files/bkpidr.yaml files/bkpddr.yaml files/qvo-ranch.yaml files/scidmz-ranch.yaml files/vo-ranch.yaml
+yamls: secrets/qa-bkpi.yaml secrets/qa-bkpd.yaml secrets/bkpi.yaml secrets/bkpd.yaml secrets/bkpidr.yaml secrets/bkpddr.yaml secrets/qvo-ranch.yaml secrets/scidmz-ranch.yaml secrets/vo-ranch.yaml
 
 #namespaces: @ namespaces info by CLUSTER
 namespaces: yamls

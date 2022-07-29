@@ -9,3 +9,5 @@
   - [ ] Use secrets in volumes
   - [ ] Secret creation with Make
 - [ ] Modify scripts to use volume secret location
+- [ ] refactor makefile
+- [ ] rename files dir to secrets
