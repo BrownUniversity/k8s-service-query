@@ -94,7 +94,7 @@ def res_count(namespace):
 def main():
   # for each cluster do the thing
   for cl_name in cluster_list:
-    # load kconfig yaml 
+    # load kconfig yaml
     kconfig_file = kconfig_dir + '/' + cl_name + '.yaml'
     config.load_kube_config(config_file=kconfig_file)
     nsquery(cl_name)

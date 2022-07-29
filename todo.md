@@ -5,14 +5,15 @@
 - [X] Figure out output location
 - [ ] Figure out output format(s)
 - [ ] Create HTML page(s)
-- [ ] Build out kustomize deploy
+- [X] Build out kustomize deploy
   - [ ] Use secrets in volumes
-  - [ ] Secret creation with Make
+  - [ ] ~~Use secrets in enviroments~~
+  - [X] Secret creation with Make
 - [X] Modify scripts to use volume secret location
-- [ ] refactor makefile
+- [X] refactor makefile
 - [X] rename files dir to secrets
-- [ ] create namespace in bke-namespace repo
-- [ ] Request cert for default VIP
-- [ ] Request DNS to default VIP
+- [X] create namespace in bke-namespace repo
+- [X] Request cert for default VIP
+- [X] Request DNS to default VIP
 - [ ] Rewrite README.md
-- [ ] create harbor project/repo
+- [X] create harbor project/repo
