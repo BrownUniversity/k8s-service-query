@@ -10,4 +10,4 @@ spec:
     kind: ClusterIssuer
   commonName: bkereporting.apps.brown.edu
   dnsNames:
-  - bkereports.apps.brown.edu
+  - bkereporting.apps.brown.edu

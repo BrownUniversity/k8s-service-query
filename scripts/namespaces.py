@@ -41,11 +41,16 @@ def nsquery(cl_name):
   # Define Core API connection
   core_query = client.CoreV1Api()
   # Setup output file
-  output = html_dir + 'outputs/' + cl_name + '_namespaces.csv'
+  output = html_dir + '/' + cl_name + '_namespaces.csv'
   csv_file = open(output, 'w')
   csv_file.write('Namespace, Owner, Resources\n')
   # Get namespace list
-  namespace_info = core_query.list_namespace(watch=False, timeout_seconds=15)
+  try:
+    namespace_info = core_query.list_namespace(watch=False, timeout_seconds=15)
+  except:
+    print(f'Error in query: {cl_name}')
+    return
+
   # Get namespace list but remove some (system, utility, etc)
   for ns in namespace_info.items:
     if re.match(temp, ns.metadata.name):

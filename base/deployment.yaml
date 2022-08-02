@@ -21,6 +21,9 @@ spec:
         volumeMounts:
         - name: bkereporting
           mountPath: /usr/share/nginx/html
+        - name: kubeconfigs
+          mountPath: "/etc/kubeconfig"
+          readOnly: true
         resources:
           requests:
             cpu: 100m
@@ -32,5 +35,26 @@ spec:
       - name: bkereporting
         persistentVolumeClaim:
           claimName: bkereporting
+      - name: kubeconfigs
+        projected:
+          sources:
+          - secret:
+              name: bkpd
+          - secret:
+              name: bkpi
+          - secret:
+              name: bkpddr
+          - secret:
+              name: bkpidr
+          - secret:
+              name: qa-bkpd
+          - secret:
+              name: qa-bkpi
+          - secret:
+              name: vo-ranch
+          - secret:
+              name: qvo-ranch
+          - secret:
+              name: scidmz-ranch
       nodeSelector:
         node-role.kubernetes.io/worker: "true"

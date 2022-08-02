@@ -18,10 +18,15 @@ cluster_list = ['qa-bkpd', 'qa-bkpi', 'bkpd', 'bkpi', 'bkpddr', 'bkpidr', 'vo-ra
 def node_list(cl_name):
   # Define Core API connection
   core_query = client.CoreV1Api()
-  node_query = core_query.list_node(watch=False, timeout_seconds=15)
+  try:
+    node_query = core_query.list_node(watch=False, timeout_seconds=15)
+  except:
+    print(f'Error in query: {cl_name}')
+    return
+    
   node_num = len(node_query.items)
   # Setup output file
-  output = html_dir + 'outputs/' + cl_name + '_nodes.csv'
+  output = html_dir + '/' + cl_name + '_nodes.csv'
   csv_file = open(output, 'w')
   csv_file.write('Node,Type\n')
   for node in node_query.items:
