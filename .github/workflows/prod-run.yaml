@@ -16,6 +16,11 @@ jobs:
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
       -
+        name: Get kubectl
+        uses: azure/setup-kubectl@6025c840858f1afa584a5190a4426c338f59e503
+        with:
+          version: v1.20.0
+      -
         name: Build PROD image
         run: make build
       -
