@@ -9,6 +9,8 @@ SECRET_FILES=$(shell cat .blackbox/blackbox-files.txt)
 $(SECRET_FILES): %: %.gpg
 	gpg --decrypt --quiet --no-tty --yes $< > $@
 
+## Variables
+HASH := $(shell git rev-parse --short HEAD | tr -d '\n')
 CLUSTER ?= bkpd bkpi bkpddr bkpidr qa-bkpd qa-bkpi vo-ranch qvo-ranch scidmz-ranch
 
 .PHONY: build dlogin.qa dlogin.prod push.qa push.prod \
@@ -21,8 +23,8 @@ yamls: secrets/qa-bkpi.yaml secrets/qa-bkpd.yaml secrets/bkpi.yaml \
 ## DOCKER BUILD ##
 #build: @ Build the docker image, one for all envs
 build:
-	docker build -t harbor.services.brown.edu/bkereporting/reporter \
-	-t harbor.cis-qas.brown.edu/bkereporting/reporter ./
+	docker build -t harbor.services.brown.edu/bkereporting/reporter:$(HASH) \
+	-t harbor.cis-qas.brown.edu/bkereporting/reporter:$(HASH) ./
 
 ## DOCKER LOGIN ##
 #dlogin.qa: @ QA docker login
@@ -38,11 +40,11 @@ dlogin.prod: secrets/robot.prod
 ## DOCKER PUSH ##
 #push.qa: @ Push image to QA harbor
 push.qa: dlogin.qa
-	docker push harbor.cis-qas.brown.edu/bkereporting/reporter
+	docker push harbor.cis-qas.brown.edu/bkereporting/reporter:$(HASH)
 
 #push.prod: @ Push image to PROD harbor
 push.prod: dlogin.prod
-	docker push harbor.services.brown.edu/bkereporting/reporter
+	docker push harbor.services.brown.edu/bkereporting/reporter:$(HASH)
 
 ## CREATE/UPDATE SECRETS TO NAMESPACE ##
 #secrets.qa: @ publish secrets to QA namespace
@@ -62,10 +64,10 @@ secrets.prod: yamls
 ## DELPOY APP TO NAMESPACE ##
 #deploy.qa: @ deploy app to QA namespace
 deploy.qa: secrets.qa
-	echo "deploy.qa"
 	kubectl apply -k overlays/qa --kubeconfig=secrets/qa-bkpi.yaml
+	kubectl set image deployment/bkereporting harbor.cis-qas.brown.edu/bkereporting/reporter:$(HASH)
 
 #deploy.prod: @ deploy app to PROD namespace
 deploy.prod: secrets.prod
-	echo "deploy.prod"
 	kubectl apply -k overlays/prod --kubeconfig=secrets/bkpi.yaml
+	kubectl set image deployment/bkereporting harbor.services.brown.edu/bkereporting/reporter:$(HASH)

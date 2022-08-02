@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: bkereporting
-        image: harbor.cis-qas.brown.edu/bkereporting/reporter:latest
+        image: harbor.cis-qas.brown.edu/bkereporting/reporter
         imagePullPolicy: Always    
         ports:
         - containerPort: 8080
