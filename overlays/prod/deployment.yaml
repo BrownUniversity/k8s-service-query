@@ -13,4 +13,4 @@ spec:
     spec:
       containers:
       - name: bkereporting
-        image: harbor.services.brown.edu/bkereporting/reporter:latest
+        image: harbor.services.brown.edu/bkereporting/reporter
