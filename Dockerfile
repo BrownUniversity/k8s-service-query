@@ -18,4 +18,4 @@ RUN crontab /etc/cron.d/bke-cron
 RUN touch /var/log/cron.log
 RUN touch /var/run/crond.pid && chmod 777 /var/run/crond.pid
 USER 1001
-CMD ["sh", "-c", "cron ; nginx -g daemon off"]
+CMD ["sh", "-c", "cron ; nginx -g 'daemon off;'"]
