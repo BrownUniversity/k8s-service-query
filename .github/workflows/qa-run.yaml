@@ -1,0 +1,36 @@
+name: Deploy Query server to QA
+on:
+  push:
+    branches:
+      - qa
+    paths:
+      - '**'
+      - '!**.md'
+      - '!.blackbox/**'
+
+jobs:
+  QA_K8S_Query:
+    runs-on: self-hosted
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@e00cb83a68c1158b29afc5217dd0582cada6d172
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+      -
+        name: Get kubectl
+        uses: azure/setup-kubectl@6025c840858f1afa584a5190a4426c338f59e503
+        with:
+          version: v1.20.0
+      -
+        name: Build QA image
+        run: make build
+      -
+        name: Push QA image
+        run: make push.qa
+      -
+        name: Deploy QA app
+        run: make deploy.qa
