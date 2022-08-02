@@ -11,6 +11,9 @@ import sys
 import re
 from kubernetes import client, config
 
+
+html_dir = '/usr/share/nginx/html'
+kconfig_dir = '/etc/kubeconfig'
 cluster_list = ['qa-bkpd', 'qa-bkpi', 'bkpd', 'bkpi', 'bkpddr', 'bkpidr', 'vo-ranch', 'qvo-ranch', 'scidmz-ranch']
 excluded_raw = [
   'security-scan',
@@ -38,11 +41,16 @@ def nsquery(cl_name):
   # Define Core API connection
   core_query = client.CoreV1Api()
   # Setup output file
-  output = 'outputs/' + cl_name + '_namespaces.csv'
+  output = html_dir + '/' + cl_name + '_namespaces.csv'
   csv_file = open(output, 'w')
   csv_file.write('Namespace, Owner, Resources\n')
   # Get namespace list
-  namespace_info = core_query.list_namespace(watch=False, timeout_seconds=15)
+  try:
+    namespace_info = core_query.list_namespace(watch=False, timeout_seconds=15)
+  except:
+    print(f'Error in query: {cl_name}')
+    return
+
   # Get namespace list but remove some (system, utility, etc)
   for ns in namespace_info.items:
     if re.match(temp, ns.metadata.name):
@@ -91,8 +99,8 @@ def res_count(namespace):
 def main():
   # for each cluster do the thing
   for cl_name in cluster_list:
-    # load kconfig yaml 
-    kconfig_file = 'files/' + cl_name + '.yaml'
+    # load kconfig yaml
+    kconfig_file = kconfig_dir + '/' + cl_name + '.yaml'
     config.load_kube_config(config_file=kconfig_file)
     nsquery(cl_name)
 

@@ -9,17 +9,63 @@ SECRET_FILES=$(shell cat .blackbox/blackbox-files.txt)
 $(SECRET_FILES): %: %.gpg
 	gpg --decrypt --quiet --no-tty --yes $< > $@
 
-.PHONY: 
+CLUSTER ?= bkpd bkpi bkpddr bkpidr qa-bkpd qa-bkpi vo-ranch qvo-ranch scidmz-ranch
 
-yamls: files/qa-bkpi.yaml files/qa-bkpd.yaml files/bkpi.yaml files/bkpd.yaml files/bkpidr.yaml files/bkpddr.yaml files/qvo-ranch.yaml files/scidmz-ranch.yaml files/vo-ranch.yaml
+.PHONY: build dlogin.qa dlogin.prod push.qa push.prod \
+	secrets.qa secrets.prod deploy.qa deploy.prod
 
-#namespaces: @ namespaces info by CLUSTER
-namespaces: yamls
-	./namespace.py
+yamls: secrets/qa-bkpi.yaml secrets/qa-bkpd.yaml secrets/bkpi.yaml \
+	secrets/bkpd.yaml secrets/bkpidr.yaml secrets/bkpddr.yaml \
+	secrets/qvo-ranch.yaml secrets/scidmz-ranch.yaml secrets/vo-ranch.yaml
 
-#nodes: @ Node info by cluster
-nodes: yamls
-	./nodes.py
+## DOCKER BUILD ##
+#build: @ Build the docker image, one for all envs
+build:
+	docker build -t harbor.services.brown.edu/bkereporting/reporter \
+	-t harbor.cis-qas.brown.edu/bkereporting/reporter ./
 
-#export: @ Move exported files 
-export: 
+## DOCKER LOGIN ##
+#dlogin.qa: @ QA docker login
+dlogin.qa: secrets/robot.qa
+	cat secrets/robot.qa | docker login -u 'bke-bkereporting+build' \
+	--password-stdin harbor.cis-qas.brown.edu
+
+#dlogin.prod: @ PROD docker login
+dlogin.prod: secrets/robot.prod
+	cat secrets/robot.prod | docker login -u 'bke-bkereporting+build' \
+	--password-stdin harbor.services.brown.edu
+
+## DOCKER PUSH ##
+#push.qa: @ Push image to QA harbor
+push.qa: dlogin.qa
+	docker push harbor.cis-qas.brown.edu/bkereporting/reporter
+
+#push.prod: @ Push image to PROD harbor
+push.prod: dlogin.prod
+	docker push harbor.services.brown.edu/bkereporting/reporter
+
+## CREATE/UPDATE SECRETS TO NAMESPACE ##
+#secrets.qa: @ publish secrets to QA namespace
+secrets.qa: yamls
+	$(foreach CL_NAME, $(CLUSTER), \
+	kubectl delete secret $(CL_NAME) --ignore-not-found -n bkereporting --kubeconfig=secrets/qa-bkpi.yaml; \
+	kubectl create secret generic $(CL_NAME) --from-file=secrets/$(CL_NAME).yaml \
+	-n bkereporting --kubeconfig=secrets/qa-bkpi.yaml ; )
+
+#secrets.prod: @ publish secrets to PROD namespace
+secrets.prod: yamls
+	$(foreach CL_NAME, $(CLUSTER), \
+	kubectl delete secret $(CL_NAME) --ignore-not-found -n bkereporting --kubeconfig=secrets/bkpi.yaml; \
+	kubectl create secret generic $(CL_NAME) --from-file=secrets/$(CL_NAME).yaml \
+	-n bkereporting --kubeconfig=secrets/bkpi.yaml ; )
+
+## DELPOY APP TO NAMESPACE ##
+#deploy.qa: @ deploy app to QA namespace
+deploy.qa: secrets.qa
+	echo "deploy.qa"
+	kubectl apply -k overlays/qa --kubeconfig=secrets/qa-bkpi.yaml
+
+#deploy.prod: @ deploy app to PROD namespace
+deploy.prod: secrets.prod
+	echo "deploy.prod"
+	kubectl apply -k overlays/prod --kubeconfig=secrets/bkpi.yaml

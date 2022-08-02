@@ -2,5 +2,19 @@
 - [X] Add VO PROD and QA
 - [X] ADD SDMZ
 - [X] Write Makefile queries
-- [ ] Figure out output location
-- [ ] Figure out output format
+- [X] Figure out output location
+- [X] Figure out output format(s)
+- [ ] Create HTML page(s)
+- [X] Build out kustomize deploy
+  - [X] Use secrets in volumes
+  - [ ] ~~Use secrets in enviroments~~
+  - [X] Secret creation with Make
+- [X] Modify scripts to use volume secret location
+- [X] refactor makefile
+- [X] rename files dir to secrets
+- [X] create namespace in bke-namespace repo
+- [X] Request cert for default VIP
+- [X] Request DNS to default VIP
+- [ ] Rewrite README.md
+- [X] create harbor project/repo
+- [ ] Create actions and workflow

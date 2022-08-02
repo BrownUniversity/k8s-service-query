@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: bkereporting
+  namespace: cert-manager
+spec:
+  secretName: bkereporting-tls
+  issuerRef:
+    name: bke-ci-eab
+    kind: ClusterIssuer
+  commonName: qa.bkereporting.apps.brown.edu
+  dnsNames:
+  - qa.bkereporting.apps.brown.edu

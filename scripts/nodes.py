@@ -11,15 +11,22 @@ import sys
 import re
 from kubernetes import client, config
 
+html_dir = '/usr/share/nginx/html'
+kconfig_dir = '/etc/kubeconfig'
 cluster_list = ['qa-bkpd', 'qa-bkpi', 'bkpd', 'bkpi', 'bkpddr', 'bkpidr', 'vo-ranch', 'qvo-ranch', 'scidmz-ranch']
 
 def node_list(cl_name):
   # Define Core API connection
   core_query = client.CoreV1Api()
-  node_query = core_query.list_node(watch=False, timeout_seconds=15)
+  try:
+    node_query = core_query.list_node(watch=False, timeout_seconds=15)
+  except:
+    print(f'Error in query: {cl_name}')
+    return
+    
   node_num = len(node_query.items)
   # Setup output file
-  output = 'outputs/' + cl_name + '_nodes.csv'
+  output = html_dir + '/' + cl_name + '_nodes.csv'
   csv_file = open(output, 'w')
   csv_file.write('Node,Type\n')
   for node in node_query.items:
@@ -36,7 +43,7 @@ def main():
   # for each cluster do the thing
   for cl_name in cluster_list:
     # load kconfig yaml
-    kconfig_file = 'files/' + cl_name + '.yaml'
+    kconfig_file = kconfig_dir + '/' + cl_name + '.yaml'
     config.load_kube_config(config_file=kconfig_file)
     node_list(cl_name)
 

@@ -1,0 +1,16 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bkereporting
+spec:
+  selector:
+    matchLabels:
+      app: bkereporting
+  template:
+    metadata:
+      labels:
+        app: bkereporting
+    spec:
+      containers:
+      - name: bkereporting
+        image: harbor.services.brown.edu/bkereporting/reporter:latest
