@@ -65,9 +65,9 @@ secrets.prod: yamls
 #deploy.qa: @ deploy app to QA namespace
 deploy.qa: secrets.qa
 	kubectl apply -k overlays/qa --kubeconfig=secrets/qa-bkpi.yaml
-	kubectl set image deployment/bkereporting bkereporting=harbor.cis-qas.brown.edu/bkereporting/reporter:$(HASH) -n bkereporting
+	kubectl set image deployment/bkereporting bkereporting=harbor.cis-qas.brown.edu/bkereporting/reporter:$(HASH) -n bkereporting --kubeconfig=secrets/qa-bkpi.yaml
 
 #deploy.prod: @ deploy app to PROD namespace
 deploy.prod: secrets.prod
 	kubectl apply -k overlays/prod --kubeconfig=secrets/bkpi.yaml
-	kubectl set image deployment/bkereporting bkereporting=harbor.services.brown.edu/bkereporting/reporter:$(HASH) -n bkereporting
+	kubectl set image deployment/bkereporting bkereporting=harbor.services.brown.edu/bkereporting/reporter:$(HASH) -n bkereporting --kubeconfig=secrets/bkpi.yaml
