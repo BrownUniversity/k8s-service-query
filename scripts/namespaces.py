@@ -35,6 +35,21 @@ excluded_raw = [
   'backup'
 ]
 temp = '(?:% s)' % '|'.join(excluded_raw)
+html_start = """
+<html>
+<head>
+<title>Namespaces</title>
+</head>
+<body>
+<table>
+
+"""
+
+html_end = """
+</table>
+</html>
+"""
+
 
 # Define the function that does the thing 
 def nsquery(cl_name):
@@ -42,8 +57,9 @@ def nsquery(cl_name):
   core_query = client.CoreV1Api()
   # Setup output file
   output = html_dir + '/' + cl_name + '_namespaces.csv'
-  csv_file = open(output, 'w')
-  csv_file.write('Namespace, Owner, Resources\n')
+  html_file = open(output, 'w')
+  html_file.write(html_start)
+  html_file.write('<tr><th>Namespace</th><th>Owner</th><th>Resources</th></tr>\n')
   # Get namespace list
   try:
     namespace_info = core_query.list_namespace(watch=False, timeout_seconds=15)
@@ -66,7 +82,8 @@ def nsquery(cl_name):
           ns_owner = "oitvo"
         # Output info
         ns_resources = res_count(ns.metadata.name)
-        csv_file.write(ns.metadata.name + ', ' + ns_owner + ', ' + str(ns_resources) + '\n')
+        html_file.write('<tr><td>' + ns.metadata.name + '</td><td>' + ns_owner + '</td><td>' + str(ns_resources) + '</td></tr>\n')
+  html_file.write(html_end)
 
 # Get count of various resources in a namespace
 def res_count(namespace):
