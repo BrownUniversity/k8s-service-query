@@ -8,6 +8,7 @@ RUN apt-get -y install python3 python3-pip && ln -sf python3 /usr/bin/python
 RUN pip3 install --no-cache --upgrade pip setuptools
 RUN pip3 install -r /tmp/requirements.txt
 COPY ./scripts/*.py /usr/local/bin/
+COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
 
 # Install cron and cronjob
 RUN apt-get -y install cron
