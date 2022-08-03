@@ -40,7 +40,7 @@ def node_list(cl_name):
   output = html_dir + '/' + cl_name + '_nodes.html'
   html_file = open(output, 'w')
   html_file.write(html_start)
-  html_file.write('<h1>Cluster ' + cl_name + ' Nodes</h1><table>')
+  html_file.write('<h1>Cluster ' + cl_name + ' Nodes</h1><table border="1">')
   html_file.write('<tr><th>Node Name</th><th>Node Type</th></tr>\n')
   for node in node_query.items:
     labels = node.metadata.labels

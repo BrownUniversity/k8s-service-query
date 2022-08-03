@@ -55,10 +55,10 @@ def nsquery(cl_name):
   # Define Core API connection
   core_query = client.CoreV1Api()
   # Setup output file
-  output = html_dir + '/' + cl_name + '_namespaces.csv'
+  output = html_dir + '/' + cl_name + '_namespaces.html'
   html_file = open(output, 'w')
   html_file.write(html_start)
-  html_file.write('<h1>Cluster ' + cl_name + ' Namespaces</h1><table>')
+  html_file.write('<h1>Cluster ' + cl_name + ' Namespaces</h1><table border="1">')
   html_file.write('<tr><th>Namespace</th><th>Owner</th><th>Resources</th></tr>\n')
   # Get namespace list
   try:
