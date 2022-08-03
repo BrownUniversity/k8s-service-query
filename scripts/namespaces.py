@@ -41,7 +41,6 @@ html_start = """
 <title>Namespaces</title>
 </head>
 <body>
-<table>
 
 """
 
@@ -59,6 +58,7 @@ def nsquery(cl_name):
   output = html_dir + '/' + cl_name + '_namespaces.csv'
   html_file = open(output, 'w')
   html_file.write(html_start)
+  html_file.write('<h1>Cluster ' + cl_name + ' Namespaces</h1><table>')
   html_file.write('<tr><th>Namespace</th><th>Owner</th><th>Resources</th></tr>\n')
   # Get namespace list
   try:
