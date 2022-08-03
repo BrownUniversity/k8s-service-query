@@ -14,7 +14,18 @@ from kubernetes import client, config
 html_dir = '/usr/share/nginx/html'
 kconfig_dir = '/etc/kubeconfig'
 cluster_list = ['qa-bkpd', 'qa-bkpi', 'bkpd', 'bkpi', 'bkpddr', 'bkpidr', 'vo-ranch', 'qvo-ranch', 'scidmz-ranch']
+html_start = """
+<html>
+<head>
+<title>Nodes</title>
+</head>
+<body>
+"""
 
+html_end = """
+</table>
+</html>
+"""
 def node_list(cl_name):
   # Define Core API connection
   core_query = client.CoreV1Api()
@@ -26,9 +37,11 @@ def node_list(cl_name):
     
   node_num = len(node_query.items)
   # Setup output file
-  output = html_dir + '/' + cl_name + '_nodes.csv'
-  csv_file = open(output, 'w')
-  csv_file.write('Node,Type\n')
+  output = html_dir + '/' + cl_name + '_nodes.html'
+  html_file = open(output, 'w')
+  html_file.write(html_start)
+  html_file.write('<h1>Cluster ' + cl_name + ' Nodes</h1><table border="1">')
+  html_file.write('<tr><th>Node Name</th><th>Node Type</th></tr>\n')
   for node in node_query.items:
     labels = node.metadata.labels
     node_name = labels.get('kubernetes.io/hostname')
@@ -37,7 +50,8 @@ def node_list(cl_name):
       node_text = "ControlPlane"
     else:
       node_text = "Worker"
-    csv_file.write(node_name + ', ' + node_text + '\n')
+    html_file.write('<tr><td>' + node_name + '</td><td>' + node_text + '</td></tr>\n')
+  html_file.write(html_end)
 
 def main():
   # for each cluster do the thing
@@ -46,6 +60,7 @@ def main():
     kconfig_file = kconfig_dir + '/' + cl_name + '.yaml'
     config.load_kube_config(config_file=kconfig_file)
     node_list(cl_name)
+
 
 ## OK, actually do the stuff.
 if __name__ == '__main__': main()
