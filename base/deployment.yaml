@@ -26,11 +26,11 @@ spec:
           readOnly: true
         resources:
           requests:
-            cpu: 100m
-            memory: "128M"
+            cpu: 150m
+            memory: "200M"
           limits:
-            cpu: 100m
-            memory: "256M"
+            cpu: 300m
+            memory: "300M"
       volumes:
       - name: bkereporting
         persistentVolumeClaim:
