@@ -14,15 +14,15 @@ jobs:
     steps:
       -
         name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       -
         name: Import GPG key
-        uses: crazy-max/ghaction-import-gpg@e00cb83a68c1158b29afc5217dd0582cada6d172
+        uses: crazy-max/ghaction-import-gpg@v5
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
       -
         name: Get kubectl
-        uses: azure/setup-kubectl@6025c840858f1afa584a5190a4426c338f59e503
+        uses: azure/setup-kubectl@v3
         with:
           version: v1.20.0
       -
