@@ -92,7 +92,7 @@ def res_count(namespace):
   core_query = client.CoreV1Api()
   app_query = client.AppsV1Api()
   job_query = client.BatchV1Api()
-  cron_query = client.BatchV1beta1Api()
+  cron_query = client.BatchV1Api()
   # Pull in other resources for this namespace
   pods_info = core_query.list_namespaced_pod(namespace, watch=False, timeout_seconds=15)
   res_num = res_num + len(pods_info.items)
