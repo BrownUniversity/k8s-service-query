@@ -4,21 +4,12 @@
 help:
 	@grep -E '[a-zA-Z\.\-]+:.*?@ .*$$' $(MAKEFILE_LIST)| tr -d '#'  | awk 'BEGIN {FS = ":.*?@ "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-#secrets: @ Files to decrypt
-SECRET_FILES=$(shell cat .blackbox/blackbox-files.txt)
-$(SECRET_FILES): %: %.gpg
-	gpg --decrypt --quiet --no-tty --yes $< > $@
-
 ## Variables
 HASH := $(shell git rev-parse --short HEAD | tr -d '\n')
-CLUSTER ?= bkpd bkpi bkpddr bkpidr qa-bkpd qa-bkpi vo-ranch qvo-ranch scidmz-ranch
+CLUSTER ?= bkpd bkpi bkpddr bkpidr qa-bkpd qa-bkpi vo-ranch qvo-ranch scidmz-ranch qscidmz-ranch
 
 .PHONY: build dlogin.qa dlogin.prod push.qa push.prod \
 	secrets.qa secrets.prod deploy.qa deploy.prod
-
-yamls: secrets/qa-bkpi.yaml secrets/qa-bkpd.yaml secrets/bkpi.yaml \
-	secrets/bkpd.yaml secrets/bkpidr.yaml secrets/bkpddr.yaml \
-	secrets/qvo-ranch.yaml secrets/scidmz-ranch.yaml secrets/vo-ranch.yaml
 
 ## DOCKER BUILD ##
 #build: @ Build the docker image, one for all envs
@@ -28,12 +19,12 @@ build:
 
 ## DOCKER LOGIN ##
 #dlogin.qa: @ QA docker login
-dlogin.qa: secrets/robot.qa
+dlogin.qa:
 	cat secrets/robot.qa | docker login -u 'bke-bkereporting+build' \
 	--password-stdin harbor.cis-qas.brown.edu
 
 #dlogin.prod: @ PROD docker login
-dlogin.prod: secrets/robot.prod
+dlogin.prod: 
 	cat secrets/robot.prod | docker login -u 'bke-bkereporting+build' \
 	--password-stdin harbor.services.brown.edu
 

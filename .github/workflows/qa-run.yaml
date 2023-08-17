@@ -8,6 +8,19 @@ on:
       - '!**.md'
       - '!.blackbox/**'
 
+env:
+  VO_RANCH_KUBECONF: ${{ secrets.VO_RANCH_KUBECONF }}
+  SCIDMZ_KUBECONF: ${{ secrets.SCIDMZ_KUBECONF }}
+  PBKPD_KUBECONF: ${{ secrets.PBKPD_KUBECONF }}
+  PBKPI_KUBECONF: ${{ secrets.PBKPI_KUBECONF }}
+  QBKPI_KUBECONF: ${{ secrets.QBKPI_KUBECONF }}
+  QBKPD_KUBECONF: ${{ secrets.QBKPD_KUBECONF }}
+  QSCIDMZ_KUBECONF: ${{ secrets.QSCIDMZ_KUBECONF }}
+  QVO_RANCH_KUBECONF: ${{ secrets.QVO_RANCH_KUBECONF }}
+  DRBKPD_KUBECONF: ${{ secrets.DRBKPD_KUBECONF }}
+  DRBKPI_KUBECONF: ${{ secrets.DRBKPI_KUBECONF }}
+  ROBOT_QA: ${{ secrets.ROBOT_QA }}
+
 jobs:
   QA_K8S_Query:
     runs-on: self-hosted
@@ -25,6 +38,21 @@ jobs:
         uses: azure/setup-kubectl@v3
         with:
           version: v1.20.0
+      -
+        name: pull kubeconfig
+        run: |
+          mkdir secrets
+          touch secrets/qa-bkpi.yaml ; echo "$QBKPI_KUBECONF" > secrets/qa-bkpi.yaml
+          touch secrets/qa-bkpd.yaml ; echo "$QBKPD_KUBECONF" > secrets/qa-bkpd.yaml
+          touch secrets/bkpi.yaml ; echo "$PBKPI_KUBECONF" > secrets/bkpi.yaml
+          touch secrets/bkpd.yaml ; echo "$PBKPD_KUBECONF" > secrets/bkpd.yaml
+          touch secrets/bkpidr.yaml ; echo "$DRBKPI_KUBECONF" > secrets/bkpidr.yaml
+          touch secrets/bkpddr.yaml ; echo "$DRBKPD_KUBECONF" > secrets/bkpddr.yaml
+          touch secrets/qvo-ranch.yaml ; echo "$QVO_RANCH_KUBECONF" > secrets/qvo-ranch.yaml
+          touch secrets/scidmz-ranch.yaml ; echo "$SCIDMZ_KUBECONF" > secrets/scidmz-ranch.yaml
+          touch secrets/qscidmz-ranch.yaml ; echo "$QSCIDMZ_KUBECONF" > secrets/qscidmz-ranch.yaml
+          touch secrets/vo-ranch.yaml ; echo "$VO_RANCH_KUBECONF" > secrets/vo-ranch.yaml
+          touch secrets/robot.qa ; echo "$ROBOT_QA" > secrets/robot.qa
       -
         name: Build QA image
         run: make build
