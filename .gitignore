@@ -1,7 +1,6 @@
 /.blackbox/pubring.gpg~
 /.blackbox/pubring.kbx~
 /.blackbox/secring.gpg
-/secrets/qa-bkpd.yaml
 /secrets/qa-bkpi.yaml
 /secrets/qvo-ranch.yaml
 /secrets/scidmz-ranch.yaml
