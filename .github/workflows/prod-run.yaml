@@ -3,6 +3,7 @@ on:
   release:
     types: [released]
 
+env:
   VO_RANCH_KUBECONF: ${{ secrets.VO_RANCH_KUBECONF }}
   SCIDMZ_KUBECONF: ${{ secrets.SCIDMZ_KUBECONF }}
   PBKPD_KUBECONF: ${{ secrets.PBKPD_KUBECONF }}
