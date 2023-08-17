@@ -1,4 +1,3 @@
-secrets/robot.prod
 secrets/robot.qa
 secrets/scidmz-ranch.yaml
 secrets/vo-ranch.yaml
