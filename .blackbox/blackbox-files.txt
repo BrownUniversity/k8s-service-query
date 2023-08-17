@@ -1,4 +1,3 @@
-secrets/qa-bkpi.yaml
 secrets/qvo-ranch.yaml
 secrets/robot.prod
 secrets/robot.qa
