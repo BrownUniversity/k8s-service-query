@@ -1,4 +1,3 @@
-secrets/bkpd.yaml
 secrets/bkpddr.yaml
 secrets/bkpi.yaml
 secrets/bkpidr.yaml

@@ -2,7 +2,6 @@
 /.blackbox/pubring.kbx~
 /.blackbox/secring.gpg
 /secrets/bkpddr.yaml
-/secrets/bkpd.yaml
 /secrets/bkpidr.yaml
 /secrets/bkpi.yaml
 /secrets/qa-bkpd.yaml
