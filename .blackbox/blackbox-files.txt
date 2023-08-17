@@ -1,4 +1,3 @@
-secrets/bkpi.yaml
 secrets/bkpidr.yaml
 secrets/qa-bkpd.yaml
 secrets/qa-bkpi.yaml
