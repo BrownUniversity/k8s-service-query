@@ -14,7 +14,7 @@ env:
   QVO_RANCH_KUBECONF: ${{ secrets.QVO_RANCH_KUBECONF }}
   DRBKPD_KUBECONF: ${{ secrets.DRBKPD_KUBECONF }}
   DRBKPI_KUBECONF: ${{ secrets.DRBKPI_KUBECONF }}
-  ROBOT_PROD: ${{ secrets.ROBOT_PROD }}
+  ROBOT_PROD: ${{ secrets.VO_HARBOR_ROBOT }}
 
 jobs:
   PROD_K8S_Query:
@@ -47,7 +47,7 @@ jobs:
           touch secrets/scidmz-ranch.yaml ; echo "$SCIDMZ_KUBECONF" > secrets/scidmz-ranch.yaml
           touch secrets/qscidmz-ranch.yaml ; echo "$QSCIDMZ_KUBECONF" > secrets/qscidmz-ranch.yaml
           touch secrets/vo-ranch.yaml ; echo "$VO_RANCH_KUBECONF" > secrets/vo-ranch.yaml
-          touch secrets/robot.prod ; echo "$ROBOT_PROD" > secrets/robot.prod
+          touch secrets/robot.prod ; echo "$VO_HARBOR_ROBOT" > secrets/robot.prod
       -
         name: Build PROD image
         run: make build
