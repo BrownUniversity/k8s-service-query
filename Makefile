@@ -20,12 +20,12 @@ build:
 ## DOCKER LOGIN ##
 #dlogin.qa: @ QA docker login
 dlogin.qa:
-	cat secrets/robot.qa | docker login -u 'bke-bkereporting+build' \
+	cat secrets/robot.qa | docker login -u 'bke-vo-auto' \
 	--password-stdin harbor.cis-qas.brown.edu
 
 #dlogin.prod: @ PROD docker login
 dlogin.prod: 
-	cat secrets/robot.prod | docker login -u 'bke-bkereporting+build' \
+	cat secrets/robot.prod | docker login -u 'bke-vo-auto' \
 	--password-stdin harbor.services.brown.edu
 
 ## DOCKER PUSH ##
