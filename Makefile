@@ -39,14 +39,14 @@ push.prod: dlogin.prod
 
 ## CREATE/UPDATE SECRETS TO NAMESPACE ##
 #secrets.qa: @ publish secrets to QA namespace
-secrets.qa: yamls
+secrets.qa:
 	$(foreach CL_NAME, $(CLUSTER), \
 	kubectl delete secret $(CL_NAME) --ignore-not-found -n bkereporting --kubeconfig=secrets/qa-bkpi.yaml; \
 	kubectl create secret generic $(CL_NAME) --from-file=secrets/$(CL_NAME).yaml \
 	-n bkereporting --kubeconfig=secrets/qa-bkpi.yaml ; )
 
 #secrets.prod: @ publish secrets to PROD namespace
-secrets.prod: yamls
+secrets.prod:
 	$(foreach CL_NAME, $(CLUSTER), \
 	kubectl delete secret $(CL_NAME) --ignore-not-found -n bkereporting --kubeconfig=secrets/bkpi.yaml; \
 	kubectl create secret generic $(CL_NAME) --from-file=secrets/$(CL_NAME).yaml \
