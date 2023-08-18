@@ -23,7 +23,7 @@ env:
 
 jobs:
   QA_K8S_Query:
-    runs-on: self-hosted
+    runs-on: [self-hosted, qa-ghrunner]
     steps:
       -
         name: Checkout
