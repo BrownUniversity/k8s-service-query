@@ -18,7 +18,7 @@ env:
 
 jobs:
   PROD_K8S_Query:
-    runs-on: self-hosted
+    runs-on: [self-hosted, ghrunner]
     steps:
       -
         name: Checkout
