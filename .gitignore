@@ -1,15 +1,1 @@
-/.blackbox/pubring.gpg~
-/.blackbox/pubring.kbx~
-/.blackbox/secring.gpg
-/secrets/bkpddr.yaml
-/secrets/bkpd.yaml
-/secrets/bkpidr.yaml
-/secrets/bkpi.yaml
-/secrets/qa-bkpd.yaml
-/secrets/qa-bkpi.yaml
-/secrets/qvo-ranch.yaml
-/secrets/scidmz-ranch.yaml
-/secrets/vo-ranch.yaml
 /outputs/**.csv
-/secrets/robot.qa
-/secrets/robot.prod

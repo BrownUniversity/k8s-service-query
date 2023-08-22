@@ -13,7 +13,7 @@ from kubernetes import client, config
 
 html_dir = '/usr/share/nginx/html'
 kconfig_dir = '/etc/kubeconfig'
-cluster_list = ['qa-bkpd', 'qa-bkpi', 'bkpd', 'bkpi', 'bkpddr', 'bkpidr', 'vo-ranch', 'qvo-ranch', 'scidmz-ranch']
+cluster_list = ['qa-bkpd', 'qa-bkpi', 'bkpd', 'bkpi', 'bkpddr', 'bkpidr', 'vo-ranch', 'qvo-ranch', 'scidmz-ranch', 'qscidmz-ranch']
 html_start = """
 <html>
 <head>

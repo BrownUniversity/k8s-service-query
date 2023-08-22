@@ -4,21 +4,12 @@
 help:
 	@grep -E '[a-zA-Z\.\-]+:.*?@ .*$$' $(MAKEFILE_LIST)| tr -d '#'  | awk 'BEGIN {FS = ":.*?@ "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-#secrets: @ Files to decrypt
-SECRET_FILES=$(shell cat .blackbox/blackbox-files.txt)
-$(SECRET_FILES): %: %.gpg
-	gpg --decrypt --quiet --no-tty --yes $< > $@
-
 ## Variables
 HASH := $(shell git rev-parse --short HEAD | tr -d '\n')
-CLUSTER ?= bkpd bkpi bkpddr bkpidr qa-bkpd qa-bkpi vo-ranch qvo-ranch scidmz-ranch
+CLUSTER ?= bkpd bkpi bkpddr bkpidr qa-bkpd qa-bkpi vo-ranch qvo-ranch scidmz-ranch qscidmz-ranch
 
 .PHONY: build dlogin.qa dlogin.prod push.qa push.prod \
 	secrets.qa secrets.prod deploy.qa deploy.prod
-
-yamls: secrets/qa-bkpi.yaml secrets/qa-bkpd.yaml secrets/bkpi.yaml \
-	secrets/bkpd.yaml secrets/bkpidr.yaml secrets/bkpddr.yaml \
-	secrets/qvo-ranch.yaml secrets/scidmz-ranch.yaml secrets/vo-ranch.yaml
 
 ## DOCKER BUILD ##
 #build: @ Build the docker image, one for all envs
@@ -28,13 +19,13 @@ build:
 
 ## DOCKER LOGIN ##
 #dlogin.qa: @ QA docker login
-dlogin.qa: secrets/robot.qa
-	cat secrets/robot.qa | docker login -u 'bke-bkereporting+build' \
+dlogin.qa:
+	cat secrets/robot.qa | docker login -u 'bke-vo-auto' \
 	--password-stdin harbor.cis-qas.brown.edu
 
 #dlogin.prod: @ PROD docker login
-dlogin.prod: secrets/robot.prod
-	cat secrets/robot.prod | docker login -u 'bke-bkereporting+build' \
+dlogin.prod: 
+	cat secrets/robot.prod | docker login -u 'bke-vo-auto' \
 	--password-stdin harbor.services.brown.edu
 
 ## DOCKER PUSH ##
@@ -48,14 +39,14 @@ push.prod: dlogin.prod
 
 ## CREATE/UPDATE SECRETS TO NAMESPACE ##
 #secrets.qa: @ publish secrets to QA namespace
-secrets.qa: yamls
+secrets.qa:
 	$(foreach CL_NAME, $(CLUSTER), \
 	kubectl delete secret $(CL_NAME) --ignore-not-found -n bkereporting --kubeconfig=secrets/qa-bkpi.yaml; \
 	kubectl create secret generic $(CL_NAME) --from-file=secrets/$(CL_NAME).yaml \
 	-n bkereporting --kubeconfig=secrets/qa-bkpi.yaml ; )
 
 #secrets.prod: @ publish secrets to PROD namespace
-secrets.prod: yamls
+secrets.prod:
 	$(foreach CL_NAME, $(CLUSTER), \
 	kubectl delete secret $(CL_NAME) --ignore-not-found -n bkereporting --kubeconfig=secrets/bkpi.yaml; \
 	kubectl create secret generic $(CL_NAME) --from-file=secrets/$(CL_NAME).yaml \
