@@ -95,7 +95,13 @@ def res_count(namespace):
   cron_query = client.BatchV1Api()
   # Pull in other resources for this namespace
   pods_info = core_query.list_namespaced_pod(namespace, watch=False, timeout_seconds=15)
-  res_num = res_num + len(pods_info.items)
+  pod_ready_amount = 0
+  for pod in pods_info.items:
+    for condition in pod.status.conditions:
+      if condition.type == 'Ready' and condition.status == 'True':
+        pod_ready_amount = pod_ready_amount + 1
+        break
+  res_num = res_num + pod_ready_amount
   service_info = core_query.list_namespaced_service(namespace, watch=False, timeout_seconds=15)
   res_num = res_num + len(service_info.items)
   deploy_info = app_query.list_namespaced_deployment(namespace, watch=False, timeout_seconds=15)
@@ -104,10 +110,6 @@ def res_count(namespace):
   res_num = res_num + len(daemon_info.items)
   stateful_info = app_query.list_namespaced_stateful_set(namespace, watch=False, timeout_seconds=15)
   res_num = res_num + len(stateful_info.items)
-  replica_info = app_query.list_namespaced_replica_set(namespace, watch=False, timeout_seconds=15)
-  res_num = res_num + len(replica_info.items)
-  job_info = job_query.list_namespaced_job(namespace, watch=False, timeout_seconds=15)
-  res_num = res_num + len(job_info.items)
   cron_info = cron_query.list_namespaced_cron_job(namespace, watch=False, timeout_seconds=15)
   res_num = res_num + len(cron_info.items)
   return res_num
