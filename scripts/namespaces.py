@@ -105,7 +105,7 @@ def res_count(namespace):
       if condition.type == 'Ready' and condition.status == 'True':
         pod_ready_amount = pod_ready_amount + 1
         break
-    return pod_ready_amount == len(pods.items)
+    return pod_ready_amount == len(pods_info.items)
   res_num = res_num + pod_ready_amount
   service_info = core_query.list_namespaced_service(namespace, watch=False, timeout_seconds=15)
   res_num = res_num + len(service_info.items)
