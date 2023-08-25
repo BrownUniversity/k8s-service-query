@@ -110,8 +110,6 @@ def res_count(namespace):
   res_num = res_num + len(daemon_info.items)
   stateful_info = app_query.list_namespaced_stateful_set(namespace, watch=False, timeout_seconds=15)
   res_num = res_num + len(stateful_info.items)
-  job_info = job_query.list_namespaced_job(namespace, watch=False, timeout_seconds=15)
-  res_num = res_num + len(job_info.items)
   cron_info = cron_query.list_namespaced_cron_job(namespace, watch=False, timeout_seconds=15)
   res_num = res_num + len(cron_info.items)
   return res_num
