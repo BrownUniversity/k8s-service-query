@@ -11,7 +11,7 @@ import sys
 import re
 from kubernetes import client, config
 
-
+total_pods=0
 html_dir = '/usr/share/nginx/html'
 kconfig_dir = '/etc/kubeconfig'
 cluster_list = ['qa-bkpd', 'qa-bkpi', 'bkpd', 'bkpi', 'bkpddr', 'bkpidr', 'vo-ranch', 'qvo-ranch', 'scidmz-ranch',  'qscidmz-ranch']
@@ -45,8 +45,11 @@ html_start = """
 """
 
 html_end = """
-</table>
 </html>
+"""
+
+table_end = """
+</table>
 """
 
 
@@ -82,7 +85,10 @@ def nsquery(cl_name):
           ns_owner = "oitvo"
         # Output info
         ns_resources = res_count(ns.metadata.name)
+        total_pods = total_pods + ns_resources
         html_file.write('<tr><td>' + ns.metadata.name + '</td><td>' + ns_owner + '</td><td>' + str(ns_resources) + '</td></tr>\n')
+  html_file.write(table_end)
+  html_file.write('<h3>Total Pod Count = ' + str(total_pods) + '</h3>')
   html_file.write(html_end)
 
 # Get count of various resources in a namespace
