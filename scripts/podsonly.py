@@ -11,7 +11,6 @@ import sys
 import re
 from kubernetes import client, config
 
-total_pods=0
 html_dir = '/usr/share/nginx/html'
 kconfig_dir = '/etc/kubeconfig'
 cluster_list = ['qa-bkpd', 'qa-bkpi', 'bkpd', 'bkpi', 'bkpddr', 'bkpidr', 'vo-ranch', 'qvo-ranch', 'scidmz-ranch',  'qscidmz-ranch']
@@ -71,6 +70,7 @@ def nsquery(cl_name):
     return
 
   # Get namespace list but remove some (system, utility, etc)
+  total_pods=0
   for ns in namespace_info.items:
     if re.match(temp, ns.metadata.name):
       pass
