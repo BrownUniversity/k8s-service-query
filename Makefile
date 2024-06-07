@@ -6,10 +6,18 @@ help:
 
 ## Variables
 HASH := $(shell git rev-parse --short HEAD | tr -d '\n')
-CLUSTER ?= bkpd bkpi bkpddr bkpidr qa-bkpd qa-bkpi vo-ranch qvo-ranch scidmz-ranch qscidmz-ranch
+CLUSTER ?= prod-bkpd prod-bkpi dr-bkpd dr-bkpi qa-bkpd qa-bkpi prod-voutil prod-voranch qa-voranch prod-scidmz qa-scidmz
 
 .PHONY: build dlogin.qa dlogin.prod push.qa push.prod \
 	secrets.qa secrets.prod deploy.qa deploy.prod
+
+#local-dev: @ pull in secrets from bke-vo-secrets repo
+local-dev:
+	git clone git@github.com:BrownUniversity/bke-vo-secrets.git 
+	cd bke-vo-secrets && make secrets
+	mkdir secrets
+	cp ./bke-vo-secrets/kubeconf/*.yaml ./secrets
+	cp ./bke-vo-secrets/robot/*.txt ./secrets
 
 ## DOCKER BUILD ##
 #build: @ Build the docker image, one for all envs
@@ -48,9 +56,9 @@ secrets.qa:
 #secrets.prod: @ publish secrets to PROD namespace
 secrets.prod:
 	$(foreach CL_NAME, $(CLUSTER), \
-	kubectl delete secret $(CL_NAME) --ignore-not-found -n bkereporting --kubeconfig=secrets/bkpi.yaml; \
+	kubectl delete secret $(CL_NAME) --ignore-not-found -n bkereporting --kubeconfig=secrets/prod-bkpi.yaml; \
 	kubectl create secret generic $(CL_NAME) --from-file=secrets/$(CL_NAME).yaml \
-	-n bkereporting --kubeconfig=secrets/bkpi.yaml ; )
+	-n bkereporting --kubeconfig=secrets/prod-bkpi.yaml ; )
 
 ## DELPOY APP TO NAMESPACE ##
 #deploy.qa: @ deploy app to QA namespace
@@ -60,5 +68,5 @@ deploy.qa: secrets.qa
 
 #deploy.prod: @ deploy app to PROD namespace
 deploy.prod: secrets.prod
-	kubectl apply -k overlays/prod --kubeconfig=secrets/bkpi.yaml
+	kubectl apply -k overlays/prod --kubeconfig=secrets/prod-bkpi.yaml
 	kubectl set image deployment/bkereporting bkereporting=harbor.services.brown.edu/bkereporting/reporter:$(HASH) -n bkereporting --kubeconfig=secrets/bkpi.yaml
