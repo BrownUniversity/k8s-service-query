@@ -33,7 +33,7 @@ jobs:
         name: Get kubectl
         uses: azure/setup-kubectl@v3
         with:
-          version: v1.20.0
+          version: v1.26.0
       -
         name: pull kubeconfig
         run: |
