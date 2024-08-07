@@ -22,7 +22,7 @@ local-dev:
 ## DOCKER BUILD ##
 #build: @ Build the docker image, one for all envs
 build:
-	docker build -t harbor.services.brown.edu/bkereporting/reporter:$(HASH) \
+	docker build --load -t harbor.services.brown.edu/bkereporting/reporter:$(HASH) \
 	-t harbor.cis-qas.brown.edu/bkereporting/reporter:$(HASH) ./
 
 ## DOCKER LOGIN ##
