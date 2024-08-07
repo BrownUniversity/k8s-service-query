@@ -56,6 +56,11 @@ jobs:
           touch secrets/vo-ranch.yaml ; echo "$VO_UTIL_KUBECONF" > secrets/prod-voutil.yaml
           touch secrets/robot.qa ; echo "$QVO_HARBOR_ROBOT" > secrets/robot.qa
       -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          install: true
+      -
         name: Build QA image
         run: make build
       -
