@@ -3,10 +3,10 @@ kind: Ingress
 metadata:
   name: bkereporting
   annotations:
-    kubernetes.io/ingress.class: "nginx"    
     cert-manager.io/cluster-issuer: "bke-ci-eab"
 
 spec:
+  ingressClassName: nginx
   rules:
   - host: bkereporting.apps.brown.edu
     http:

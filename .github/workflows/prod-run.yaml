@@ -13,7 +13,7 @@ env:
   DRBKED_KUBECONF: ${{ secrets.DRBKED_KUBECONF }}
   DRBKEI_KUBECONF: ${{ secrets.DRBKEI_KUBECONF }}
   DR_VOUTIL2: ${{ secrets.DR_VOUTIL2 }}
-  QVO_HARBOR_ROBOT: ${{ secrets.QVO_HARBOR_ROBOT }}
+  VO_HARBOR_ROBOT: ${{ secrets.VO_HARBOR_ROBOT }}
 
 jobs:
   PROD_K8S_Query:
@@ -45,7 +45,7 @@ jobs:
           touch secrets/qa-voutil2.yaml ; echo "$QA_VO_UTIL_KUBECONF" > secrets/qa-voutil2.yaml
           touch secrets/voutil2.yaml ; echo "$VO_UTIL2_KUBECONF" > secrets/voutil2.yaml
           touch secrets/dr-voutil2.yaml ; echo "$DR_VOUTIL2" > secrets/dr-voutil2.yaml
-          touch secrets/robot.qa ; echo "$QVO_HARBOR_ROBOT" > secrets/robot.qa
+          touch secrets/robot-prod.txt ; echo "$VO_HARBOR_ROBOT" > secrets/robot-prod.txt
 
       -
         name: Set up Docker Buildx

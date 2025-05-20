@@ -39,22 +39,20 @@ spec:
         projected:
           sources:
           - secret:
-              name: bkpd
+              name: prod-bked
           - secret:
-              name: bkpi
+              name: prod-bkei
           - secret:
-              name: bkpddr
+              name: dr-bked
           - secret:
-              name: bkpidr
+              name: dr-bkei
           - secret:
-              name: qa-bkpd
+              name: qa-bked
           - secret:
-              name: qa-bkpi
+              name: qa-bkei
           - secret:
-              name: vo-ranch
+              name: voutil2
           - secret:
-              name: qvo-ranch
-          - secret:
-              name: scidmz-ranch
+              name: qa-voutil2
       nodeSelector:
         node-role.kubernetes.io/worker: "true"
