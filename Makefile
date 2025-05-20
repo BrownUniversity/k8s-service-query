@@ -6,8 +6,7 @@ help:
 
 ## Variables
 HASH := $(shell git rev-parse --short HEAD | tr -d '\n')
-CLUSTER ?= prod-bkpd prod-bkpi dr-bkpd dr-bkpi qa-bkpd qa-bkpi prod-voutil prod-voranch qa-voranch prod-scidmz qa-scidmz
-
+CLUSTER ?= prod-bked prod-bkei dr-bked dr-bkei qa-bked qa-bkei voutil2 qa-voutil2
 .PHONY: build dlogin.qa dlogin.prod push.qa push.prod \
 	secrets.qa secrets.prod deploy.qa deploy.prod
 
@@ -49,24 +48,24 @@ push.prod: dlogin.prod
 #secrets.qa: @ publish secrets to QA namespace
 secrets.qa:
 	$(foreach CL_NAME, $(CLUSTER), \
-	kubectl delete secret $(CL_NAME) --ignore-not-found -n bkereporting --kubeconfig=secrets/qa-bkpi.yaml; \
+	kubectl delete secret $(CL_NAME) --ignore-not-found -n bkereporting --kubeconfig=secrets/qa-bkei.yaml; \
 	kubectl create secret generic $(CL_NAME) --from-file=secrets/$(CL_NAME).yaml \
-	-n bkereporting --kubeconfig=secrets/qa-bkpi.yaml ; )
+	-n bkereporting --kubeconfig=secrets/qa-bkei.yaml ; )
 
 #secrets.prod: @ publish secrets to PROD namespace
 secrets.prod:
 	$(foreach CL_NAME, $(CLUSTER), \
-	kubectl delete secret $(CL_NAME) --ignore-not-found -n bkereporting --kubeconfig=secrets/prod-bkpi.yaml; \
+	kubectl delete secret $(CL_NAME) --ignore-not-found -n bkereporting --kubeconfig=secrets/prod-bkei.yaml; \
 	kubectl create secret generic $(CL_NAME) --from-file=secrets/$(CL_NAME).yaml \
-	-n bkereporting --kubeconfig=secrets/prod-bkpi.yaml ; )
+	-n bkereporting --kubeconfig=secrets/prod-bkei.yaml ; )
 
 ## DELPOY APP TO NAMESPACE ##
 #deploy.qa: @ deploy app to QA namespace
 deploy.qa: secrets.qa
-	kubectl apply -k overlays/qa --kubeconfig=secrets/qa-bkpi.yaml
-	kubectl set image deployment/bkereporting bkereporting=harbor.cis-qas.brown.edu/bkereporting/reporter:$(HASH) -n bkereporting --kubeconfig=secrets/qa-bkpi.yaml
+	kubectl apply -k overlays/qa --kubeconfig=secrets/qa-bkei.yaml
+	kubectl set image deployment/bkereporting bkereporting=harbor.cis-qas.brown.edu/bkereporting/reporter:$(HASH) -n bkereporting --kubeconfig=secrets/qa-bkei.yaml
 
 #deploy.prod: @ deploy app to PROD namespace
 deploy.prod: secrets.prod
-	kubectl apply -k overlays/prod --kubeconfig=secrets/prod-bkpi.yaml
-	kubectl set image deployment/bkereporting bkereporting=harbor.services.brown.edu/bkereporting/reporter:$(HASH) -n bkereporting --kubeconfig=secrets/prod-bkpi.yaml
+	kubectl apply -k overlays/prod --kubeconfig=secrets/prod-bkei.yaml
+	kubectl set image deployment/bkereporting bkereporting=harbor.services.brown.edu/bkereporting/reporter:$(HASH) -n bkereporting --kubeconfig=secrets/prod-bkei.yaml
