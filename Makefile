@@ -6,8 +6,7 @@ help:
 
 ## Variables
 HASH := $(shell git rev-parse --short HEAD | tr -d '\n')
-CLUSTER ?= prod-bkpd prod-bkpi dr-bkpd dr-bkpi qa-bkpd qa-bkpi prod-voutil prod-voranch qa-voranch prod-scidmz qa-scidmz
-
+CLUSTER ?= prod-bked prod-bkei dr-bked dr-bkei qa-bked qa-bkei voutil2 qa-voutil2
 .PHONY: build dlogin.qa dlogin.prod push.qa push.prod \
 	secrets.qa secrets.prod deploy.qa deploy.prod
 
@@ -19,27 +18,41 @@ local-dev:
 	cp ./bke-vo-secrets/kubeconf/*.yaml ./secrets
 	cp ./bke-vo-secrets/robot/*.txt ./secrets
 
+#clean: @ remove local-dev
+clean: 
+	rm -rf ./bke-vo-secrets && 	rm -rf ./secrets
+
 ## DOCKER BUILD ##
 #build: @ Build the docker image, one for all envs
 build:
 	docker build --load -t harbor.services.brown.edu/bkereporting/reporter:$(HASH) \
-	-t harbor.cis-qas.brown.edu/bkereporting/reporter:$(HASH) ./
+	-t harbor.cis-qas.brown.edu/bkereporting/reporter:$(HASH) \
+	-t harbordr.services.brown.edu/bkereporting/reporter:$(HASH) ./
 
 ## DOCKER LOGIN ##
 #dlogin.qa: @ QA docker login
 dlogin.qa:
-	cat secrets/robot.qa | docker login -u 'bke-vo-auto' \
+	cat secrets/robot-qa.txt | docker login -u 'bke-vo-auto' \
 	--password-stdin harbor.cis-qas.brown.edu
+
+#dlogin.dr: @ dr docker login
+dlogin.dr: 
+	cat secrets/bke-vo-auto_dr.txt | docker login -u 'bke-vo-auto' \
+	--password-stdin harbordr.services.brown.edu
 
 #dlogin.prod: @ PROD docker login
 dlogin.prod: 
-	cat secrets/robot.prod | docker login -u 'bke-vo-auto' \
+	cat secrets/robot-prod.txt | docker login -u 'bke-vo-auto' \
 	--password-stdin harbor.services.brown.edu
 
 ## DOCKER PUSH ##
 #push.qa: @ Push image to QA harbor
 push.qa: dlogin.qa
 	docker push harbor.cis-qas.brown.edu/bkereporting/reporter:$(HASH)
+
+#push.dr: @ Push image to dr harbor
+push.dr: dlogin.dr
+	docker push harbordr.services.brown.edu/bkereporting/reporter:$(HASH)
 
 #push.prod: @ Push image to PROD harbor
 push.prod: dlogin.prod
@@ -49,24 +62,37 @@ push.prod: dlogin.prod
 #secrets.qa: @ publish secrets to QA namespace
 secrets.qa:
 	$(foreach CL_NAME, $(CLUSTER), \
-	kubectl delete secret $(CL_NAME) --ignore-not-found -n bkereporting --kubeconfig=secrets/qa-bkpi.yaml; \
+	kubectl delete secret $(CL_NAME) --ignore-not-found -n bkereporting --kubeconfig=secrets/qa-bkei.yaml; \
 	kubectl create secret generic $(CL_NAME) --from-file=secrets/$(CL_NAME).yaml \
-	-n bkereporting --kubeconfig=secrets/qa-bkpi.yaml ; )
+	-n bkereporting --kubeconfig=secrets/qa-bkei.yaml ; )
+
+#secrets.dr: @ publish secrets to dr namespace
+secrets.dr:
+	$(foreach CL_NAME, $(CLUSTER), \
+	kubectl delete secret $(CL_NAME) --ignore-not-found -n bkereporting --kubeconfig=secrets/dr-bkei.yaml; \
+	kubectl create secret generic $(CL_NAME) --from-file=secrets/$(CL_NAME).yaml \
+	-n bkereporting --kubeconfig=secrets/dr-bkei.yaml ; )
 
 #secrets.prod: @ publish secrets to PROD namespace
 secrets.prod:
 	$(foreach CL_NAME, $(CLUSTER), \
-	kubectl delete secret $(CL_NAME) --ignore-not-found -n bkereporting --kubeconfig=secrets/prod-bkpi.yaml; \
+	kubectl delete secret $(CL_NAME) --ignore-not-found -n bkereporting --kubeconfig=secrets/prod-bkei.yaml; \
 	kubectl create secret generic $(CL_NAME) --from-file=secrets/$(CL_NAME).yaml \
-	-n bkereporting --kubeconfig=secrets/prod-bkpi.yaml ; )
+	-n bkereporting --kubeconfig=secrets/prod-bkei.yaml ; )
 
 ## DELPOY APP TO NAMESPACE ##
 #deploy.qa: @ deploy app to QA namespace
 deploy.qa: secrets.qa
-	kubectl apply -k overlays/qa --kubeconfig=secrets/qa-bkpi.yaml
-	kubectl set image deployment/bkereporting bkereporting=harbor.cis-qas.brown.edu/bkereporting/reporter:$(HASH) -n bkereporting --kubeconfig=secrets/qa-bkpi.yaml
+	kubectl apply -k overlays/qa --kubeconfig=secrets/qa-bkei.yaml
+	kubectl set image deployment/bkereporting bkereporting=harbor.cis-qas.brown.edu/bkereporting/reporter:$(HASH) -n bkereporting --kubeconfig=secrets/qa-bkei.yaml
+
+#deploy.dr: @ deploy app to dr namespace
+deploy.dr: secrets.dr
+	kubectl apply -k overlays/dr --kubeconfig=secrets/dr-bkei.yaml
+	kubectl set image deployment/bkereporting bkereporting=harbordr.services.brown.edu/bkereporting/reporter:$(HASH) -n bkereporting --kubeconfig=secrets/dr-bkei.yaml
+
 
 #deploy.prod: @ deploy app to PROD namespace
 deploy.prod: secrets.prod
-	kubectl apply -k overlays/prod --kubeconfig=secrets/prod-bkpi.yaml
-	kubectl set image deployment/bkereporting bkereporting=harbor.services.brown.edu/bkereporting/reporter:$(HASH) -n bkereporting --kubeconfig=secrets/prod-bkpi.yaml
+	kubectl apply -k overlays/prod --kubeconfig=secrets/prod-bkei.yaml
+	kubectl set image deployment/bkereporting bkereporting=harbor.services.brown.edu/bkereporting/reporter:$(HASH) -n bkereporting --kubeconfig=secrets/prod-bkei.yaml

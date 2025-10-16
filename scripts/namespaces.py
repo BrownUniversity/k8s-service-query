@@ -5,16 +5,16 @@
 # https://github.com/BrownUniversity/k8s-service-query
 # Developed by: thomas_duvally@brown.edu
 # 2022-07-20
+# 2025-06-20: updated clusters for RKE2 replatform project
 
 from os.path import exists as file_exists
 import sys
 import re
 from kubernetes import client, config
 
-
 html_dir = '/usr/share/nginx/html'
 kconfig_dir = '/etc/kubeconfig'
-cluster_list = ['qa-bkpd', 'qa-bkpi', 'bkpd', 'bkpi', 'bkpddr', 'bkpidr', 'vo-ranch', 'qvo-ranch', 'scidmz-ranch',  'qscidmz-ranch']
+cluster_list = ['qa-bked', 'qa-bkei', 'prod-bked', 'prod-bkei', 'dr-bked', 'dr-bkei', 'voutil2', 'qa-voutil2']
 excluded_raw = [
   'security-scan',
   'default',

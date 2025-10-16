@@ -4,18 +4,16 @@ on:
     types: [released]
 
 env:
-  VO_RANCH_KUBECONF: ${{ secrets.VO_RANCH_KUBECONF }}
-  SCIDMZ_KUBECONF: ${{ secrets.SCIDMZ_KUBECONF }}
-  PBKPD_KUBECONF: ${{ secrets.PBKPD_KUBECONF }}
-  PBKPI_KUBECONF: ${{ secrets.PBKPI_KUBECONF }}
-  QBKPI_KUBECONF: ${{ secrets.QBKPI_KUBECONF }}
-  QBKPD_KUBECONF: ${{ secrets.QBKPD_KUBECONF }}
-  QSCIDMZ_KUBECONF: ${{ secrets.QSCIDMZ_KUBECONF }}
-  QVO_RANCH_KUBECONF: ${{ secrets.QVO_RANCH_KUBECONF }}
-  DRBKPD_KUBECONF: ${{ secrets.DRBKPD_KUBECONF }}
-  DRBKPI_KUBECONF: ${{ secrets.DRBKPI_KUBECONF }}
+  VO_UTIL2_KUBECONF: ${{ secrets.VO_UTIL2_KUBECONF }}
+  PBKED_KUBECONF: ${{ secrets.PBKED_KUBECONF }}
+  PBKEI_KUBECONF: ${{ secrets.PBKEI_KUBECONF }}
+  QBKEI_KUBECONF: ${{ secrets.QBKEI_KUBECONF }}
+  QBKED_KUBECONF: ${{ secrets.QBKED_KUBECONF }}
+  QA_VO_UTIL_KUBECONF: ${{ secrets.QA_VO_UTIL_KUBECONF }}
+  DRBKED_KUBECONF: ${{ secrets.DRBKED_KUBECONF }}
+  DRBKEI_KUBECONF: ${{ secrets.DRBKEI_KUBECONF }}
+  DR_VOUTIL2: ${{ secrets.DR_VOUTIL2 }}
   VO_HARBOR_ROBOT: ${{ secrets.VO_HARBOR_ROBOT }}
-  VO_UTIL_KUBECONF: ${{ secrets.VO_UTIL_KUBECONF }}
 
 jobs:
   PROD_K8S_Query:
@@ -33,23 +31,22 @@ jobs:
         name: Get kubectl
         uses: azure/setup-kubectl@v3
         with:
-          version: v1.26.0
+          version: v1.30.0
       -
         name: pull kubeconfig
         run: |
           mkdir secrets
-          touch secrets/qa-bkpi.yaml ; echo "$QBKPI_KUBECONF" > secrets/qa-bkpi.yaml
-          touch secrets/qa-bkpd.yaml ; echo "$QBKPD_KUBECONF" > secrets/qa-bkpd.yaml
-          touch secrets/bkpi.yaml ; echo "$PBKPI_KUBECONF" > secrets/prod-bkpi.yaml
-          touch secrets/bkpd.yaml ; echo "$PBKPD_KUBECONF" > secrets/prod-bkpd.yaml
-          touch secrets/bkpidr.yaml ; echo "$DRBKPI_KUBECONF" > secrets/dr-bkpi.yaml
-          touch secrets/bkpddr.yaml ; echo "$DRBKPD_KUBECONF" > secrets/dr-bkpd.yaml
-          touch secrets/qvo-ranch.yaml ; echo "$QVO_RANCH_KUBECONF" > secrets/qa-voranch.yaml
-          touch secrets/scidmz-ranch.yaml ; echo "$SCIDMZ_KUBECONF" > secrets/prod-scidmz.yaml
-          touch secrets/qscidmz-ranch.yaml ; echo "$QSCIDMZ_KUBECONF" > secrets/qa-scidmz.yaml
-          touch secrets/vo-ranch.yaml ; echo "$VO_RANCH_KUBECONF" > secrets/prod-voranch.yaml
-          touch secrets/vo-ranch.yaml ; echo "$VO_UTIL_KUBECONF" > secrets/prod-voutil.yaml
-          touch secrets/robot.prod ; echo "$VO_HARBOR_ROBOT" > secrets/robot.prod
+          touch secrets/qa-bkei.yaml ; echo "$QBKEI_KUBECONF" > secrets/qa-bkei.yaml
+          touch secrets/qa-bked.yaml ; echo "$QBKED_KUBECONF" > secrets/qa-bked.yaml
+          touch secrets/prod-bkei.yaml ; echo "$PBKEI_KUBECONF" > secrets/prod-bkei.yaml
+          touch secrets/prod-bked.yaml ; echo "$PBKED_KUBECONF" > secrets/prod-bked.yaml
+          touch secrets/dr-bkei.yaml ; echo "$DRBKEI_KUBECONF" > secrets/dr-bkei.yaml
+          touch secrets/dr-bkpd.yaml ; echo "$DRBKED_KUBECONF" > secrets/dr-bked.yaml
+          touch secrets/qa-voutil2.yaml ; echo "$QA_VO_UTIL_KUBECONF" > secrets/qa-voutil2.yaml
+          touch secrets/voutil2.yaml ; echo "$VO_UTIL2_KUBECONF" > secrets/voutil2.yaml
+          touch secrets/dr-voutil2.yaml ; echo "$DR_VOUTIL2" > secrets/dr-voutil2.yaml
+          touch secrets/robot-prod.txt ; echo "$VO_HARBOR_ROBOT" > secrets/robot-prod.txt
+
       -
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
