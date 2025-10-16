@@ -45,7 +45,7 @@ jobs:
           touch secrets/qa-voutil2.yaml ; echo "$QA_VO_UTIL_KUBECONF" > secrets/qa-voutil2.yaml
           touch secrets/voutil2.yaml ; echo "$VO_UTIL2_KUBECONF" > secrets/voutil2.yaml
           touch secrets/dr-voutil2.yaml ; echo "$DR_VOUTIL2" > secrets/dr-voutil2.yaml
-          touch secrets/robot-prod.txt ; echo "$VO_HARBOR_ROBOT" > secrets/robot-prod.txt
+          touch secrets/bke-vo-auto_prod.txt ; echo "$VO_HARBOR_ROBOT" > secrets/bke-vo-auto_prod.txt
 
       -
         name: Set up Docker Buildx

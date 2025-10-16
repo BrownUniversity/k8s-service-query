@@ -32,7 +32,7 @@ build:
 ## DOCKER LOGIN ##
 #dlogin.qa: @ QA docker login
 dlogin.qa:
-	cat secrets/robot-qa.txt | docker login -u 'bke-vo-auto' \
+	cat secrets/bke-vo-auto_qa.txt | docker login -u 'bke-vo-auto' \
 	--password-stdin harbor.cis-qas.brown.edu
 
 #dlogin.dr: @ dr docker login
@@ -42,7 +42,7 @@ dlogin.dr:
 
 #dlogin.prod: @ PROD docker login
 dlogin.prod: 
-	cat secrets/robot-prod.txt | docker login -u 'bke-vo-auto' \
+	cat secrets/bke-vo-auto_prod.txt | docker login -u 'bke-vo-auto' \
 	--password-stdin harbor.services.brown.edu
 
 ## DOCKER PUSH ##
