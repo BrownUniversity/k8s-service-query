@@ -1,1 +1,3 @@
 /outputs/**.csv
+/bke-vo-secrets/
+/secrets/

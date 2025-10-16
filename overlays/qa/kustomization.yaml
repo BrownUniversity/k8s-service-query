@@ -1,7 +1,8 @@
-bases:
-- ../../base
-patchesStrategicMerge:
-- deployment.yaml
-- ingress.yaml
 resources:
 - cert.yaml
+- ../../base
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+patches:
+- path: deployment.yaml
+- path: ingress.yaml
