@@ -54,5 +54,7 @@ spec:
               name: voutil2
           - secret:
               name: qa-voutil2
+          - secret:
+              name: dr-voutil2
       nodeSelector:
         node-role.kubernetes.io/worker: "true"

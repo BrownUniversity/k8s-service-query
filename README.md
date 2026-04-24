@@ -40,3 +40,25 @@ deploying the application.
 * Makefile: Defines the commands to perform the build, push, deploy, etc.
 * Dockerfile: Defines how to build the new reporter image
 * requirement.txt: Python requirements file for modules
+
+## Secrets
+
+* VO SecretsVault token `vo-automation`
+  * Saved as GH Repo Secret
+  * Variable: `VO_AUTOMATION_CONNECT_TOKEN`
+  * Used by `1password/load-secrets-action` action
+* Kubeconfig files (deployment)
+  * Pulled from SecretsVault service
+  * Used by `1password/load-secrets-action` action
+  * Written as files for kubectl
+  * QA, DR, and Prod cluster deployments
+* Kubeconfig files (Reporting app)
+  * Grants access to K8S clusters
+  * Pulled from SecretsVault service
+  * Created as secrets with `OnePasswordItem`
+  * Stored in `vo-automation` vault
+* Harbor robot login
+  * Allows push to bkereporting image repo
+  * Pulled from SecretsVault service
+  * Stored in `vo-automation` vault
+  * Written as file for docker login

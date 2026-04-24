@@ -3,18 +3,6 @@ on:
   release:
     types: [released]
 
-env:
-  VO_UTIL2_KUBECONF: ${{ secrets.VO_UTIL2_KUBECONF }}
-  PBKED_KUBECONF: ${{ secrets.PBKED_KUBECONF }}
-  PBKEI_KUBECONF: ${{ secrets.PBKEI_KUBECONF }}
-  QBKEI_KUBECONF: ${{ secrets.QBKEI_KUBECONF }}
-  QBKED_KUBECONF: ${{ secrets.QBKED_KUBECONF }}
-  QA_VO_UTIL_KUBECONF: ${{ secrets.QA_VO_UTIL_KUBECONF }}
-  DRBKED_KUBECONF: ${{ secrets.DRBKED_KUBECONF }}
-  DRBKEI_KUBECONF: ${{ secrets.DRBKEI_KUBECONF }}
-  DR_VOUTIL2: ${{ secrets.DR_VOUTIL2 }}
-  VO_HARBOR_ROBOT: ${{ secrets.VO_HARBOR_ROBOT }}
-
 jobs:
   PROD_K8S_Query:
     runs-on: [self-hosted, ghrunner]
@@ -22,11 +10,17 @@ jobs:
       -
         name: Checkout
         uses: actions/checkout@v3
-      -
-        name: Import GPG key
-        uses: crazy-max/ghaction-import-gpg@111c56156bcc6918c056dbef52164cfa583dc549
+      - 
+        name: Load secrets
+        id: op-load-secret
+        uses: 1password/load-secrets-action@92467eb28f72e8255933372f1e0707c567ce2259 #v4.0.0
         with:
-          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          export-env: true
+        env:
+          OP_CONNECT_HOST: https://secretsvault.apps.brown.edu
+          OP_CONNECT_TOKEN: ${{ secrets.VO_AUTOMATION_CONNECT_TOKEN }}
+          PROD_BKEI: op://ozxznermh2dq4gbh55do65oq7e/p3prcq4ibc4ped7hhace22uv7a/prod-bkei.yaml
+          ROBOT_PROD: op://ozxznermh2dq4gbh55do65oq7e/rujmiflx3nwpdnjohbmofqvola/password
       -
         name: Get kubectl
         uses: azure/setup-kubectl@v3
@@ -35,18 +29,10 @@ jobs:
       -
         name: pull kubeconfig
         run: |
-          mkdir secrets
-          touch secrets/qa-bkei.yaml ; echo "$QBKEI_KUBECONF" > secrets/qa-bkei.yaml
-          touch secrets/qa-bked.yaml ; echo "$QBKED_KUBECONF" > secrets/qa-bked.yaml
-          touch secrets/prod-bkei.yaml ; echo "$PBKEI_KUBECONF" > secrets/prod-bkei.yaml
-          touch secrets/prod-bked.yaml ; echo "$PBKED_KUBECONF" > secrets/prod-bked.yaml
-          touch secrets/dr-bkei.yaml ; echo "$DRBKEI_KUBECONF" > secrets/dr-bkei.yaml
-          touch secrets/dr-bkpd.yaml ; echo "$DRBKED_KUBECONF" > secrets/dr-bked.yaml
-          touch secrets/qa-voutil2.yaml ; echo "$QA_VO_UTIL_KUBECONF" > secrets/qa-voutil2.yaml
-          touch secrets/voutil2.yaml ; echo "$VO_UTIL2_KUBECONF" > secrets/voutil2.yaml
-          touch secrets/dr-voutil2.yaml ; echo "$DR_VOUTIL2" > secrets/dr-voutil2.yaml
-          touch secrets/bke-vo-auto_prod.txt ; echo "$VO_HARBOR_ROBOT" > secrets/bke-vo-auto_prod.txt
-
+          mkdir -p secrets
+          echo "$PROD_BKEI" > secrets/prod-bkei.yaml
+          echo "$PROD_BKED" > secrets/prod-bked.yaml
+          echo -n "$ROBOT_PROD" > secrets/robot-prod.txt
       -
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3

@@ -2,25 +2,15 @@
 
 #help:  @ List available tasks on this project
 help:
-	@grep -E '[a-zA-Z\.\-]+:.*?@ .*$$' $(MAKEFILE_LIST)| tr -d '#'  | awk 'BEGIN {FS = ":.*?@ "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+	@grep -hE '[a-zA-Z\.\-]+:.*?@ .*$$' $(MAKEFILE_LIST)| tr -d '#'  | awk 'BEGIN {FS = ":.*?@ "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 ## Variables
 HASH := $(shell git rev-parse --short HEAD | tr -d '\n')
-CLUSTER ?= prod-bked prod-bkei dr-bked dr-bkei qa-bked qa-bkei voutil2 qa-voutil2
 .PHONY: build dlogin.qa dlogin.prod push.qa push.prod \
-	secrets.qa secrets.prod deploy.qa deploy.prod
+	deploy.qa deploy.prod local-check clean
 
-#local-dev: @ pull in secrets from bke-vo-secrets repo
-local-dev:
-	git clone git@github.com:BrownUniversity/bke-vo-secrets.git 
-	cd bke-vo-secrets && make secrets
-	mkdir secrets
-	cp ./bke-vo-secrets/kubeconf/*.yaml ./secrets
-	cp ./bke-vo-secrets/robot/*.txt ./secrets
-
-#clean: @ remove local-dev
-clean: 
-	rm -rf ./bke-vo-secrets && 	rm -rf ./secrets
+# Include local-dev functions. This includes the secrets creation locally.
+include local-dev.mk
 
 ## DOCKER BUILD ##
 #build: @ Build the docker image, one for all envs
@@ -31,18 +21,18 @@ build:
 
 ## DOCKER LOGIN ##
 #dlogin.qa: @ QA docker login
-dlogin.qa:
-	cat secrets/bke-vo-auto_qa.txt | docker login -u 'bke-vo-auto' \
+dlogin.qa: local-check
+	cat secrets/robot-qa.txt | docker login -u 'bke-vo-auto' \
 	--password-stdin harbor.cis-qas.brown.edu
 
 #dlogin.dr: @ dr docker login
-dlogin.dr: 
-	cat secrets/bke-vo-auto_dr.txt | docker login -u 'bke-vo-auto' \
+dlogin.dr: local-check
+	cat secrets/robot-dr.txt | docker login -u 'bke-vo-auto' \
 	--password-stdin harbordr.services.brown.edu
 
 #dlogin.prod: @ PROD docker login
-dlogin.prod: 
-	cat secrets/bke-vo-auto_prod.txt | docker login -u 'bke-vo-auto' \
+dlogin.prod: local-check
+	cat secrets/robot-prod.txt | docker login -u 'bke-vo-auto' \
 	--password-stdin harbor.services.brown.edu
 
 ## DOCKER PUSH ##
@@ -58,41 +48,19 @@ push.dr: dlogin.dr
 push.prod: dlogin.prod
 	docker push harbor.services.brown.edu/bkereporting/reporter:$(HASH)
 
-## CREATE/UPDATE SECRETS TO NAMESPACE ##
-#secrets.qa: @ publish secrets to QA namespace
-secrets.qa:
-	$(foreach CL_NAME, $(CLUSTER), \
-	kubectl delete secret $(CL_NAME) --ignore-not-found -n bkereporting --kubeconfig=secrets/qa-bkei.yaml; \
-	kubectl create secret generic $(CL_NAME) --from-file=secrets/$(CL_NAME).yaml \
-	-n bkereporting --kubeconfig=secrets/qa-bkei.yaml ; )
-
-#secrets.dr: @ publish secrets to dr namespace
-secrets.dr:
-	$(foreach CL_NAME, $(CLUSTER), \
-	kubectl delete secret $(CL_NAME) --ignore-not-found -n bkereporting --kubeconfig=secrets/dr-bkei.yaml; \
-	kubectl create secret generic $(CL_NAME) --from-file=secrets/$(CL_NAME).yaml \
-	-n bkereporting --kubeconfig=secrets/dr-bkei.yaml ; )
-
-#secrets.prod: @ publish secrets to PROD namespace
-secrets.prod:
-	$(foreach CL_NAME, $(CLUSTER), \
-	kubectl delete secret $(CL_NAME) --ignore-not-found -n bkereporting --kubeconfig=secrets/prod-bkei.yaml; \
-	kubectl create secret generic $(CL_NAME) --from-file=secrets/$(CL_NAME).yaml \
-	-n bkereporting --kubeconfig=secrets/prod-bkei.yaml ; )
-
 ## DELPOY APP TO NAMESPACE ##
 #deploy.qa: @ deploy app to QA namespace
-deploy.qa: secrets.qa
+deploy.qa: local-check
 	kubectl apply -k overlays/qa --kubeconfig=secrets/qa-bkei.yaml
 	kubectl set image deployment/bkereporting bkereporting=harbor.cis-qas.brown.edu/bkereporting/reporter:$(HASH) -n bkereporting --kubeconfig=secrets/qa-bkei.yaml
 
 #deploy.dr: @ deploy app to dr namespace
-deploy.dr: secrets.dr
+deploy.dr: local-check
 	kubectl apply -k overlays/dr --kubeconfig=secrets/dr-bkei.yaml
 	kubectl set image deployment/bkereporting bkereporting=harbordr.services.brown.edu/bkereporting/reporter:$(HASH) -n bkereporting --kubeconfig=secrets/dr-bkei.yaml
 
 
 #deploy.prod: @ deploy app to PROD namespace
-deploy.prod: secrets.prod
+deploy.prod: local-check
 	kubectl apply -k overlays/prod --kubeconfig=secrets/prod-bkei.yaml
 	kubectl set image deployment/bkereporting bkereporting=harbor.services.brown.edu/bkereporting/reporter:$(HASH) -n bkereporting --kubeconfig=secrets/prod-bkei.yaml
