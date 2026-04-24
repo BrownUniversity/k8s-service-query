@@ -14,7 +14,7 @@ from kubernetes import client, config
 
 html_dir = '/usr/share/nginx/html'
 kconfig_dir = '/etc/kubeconfig'
-cluster_list = ['qa-bked', 'qa-bkei', 'prod-bked', 'prod-bkei', 'dr-bked', 'dr-bkei', 'voutil2', 'qa-voutil2']
+cluster_list = ['qa-bked', 'qa-bkei', 'prod-bked', 'prod-bkei', 'dr-bked', 'dr-bkei', 'voutil2', 'qa-voutil2', 'dr-voutil2']
 excluded_raw = [
   'security-scan',
   'default',
