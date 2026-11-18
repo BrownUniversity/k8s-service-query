@@ -1,4 +1,4 @@
-FROM nginxinc/nginx-unprivileged:latest
+FROM nginx/nginx-unprivileged:latest
 COPY ./requirements.txt /tmp
 USER root
 # Install python and scripts
